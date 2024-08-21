@@ -1,0 +1,9 @@
+std_msgs/Header header
+int16 motor1_rpm 
+uint32 motor1_pos 
+int16 motor2_rpm 
+uint32 motor2_pos 
+int16 motor3_rpm 
+uint32 motor3_pos 
+int16 motor4_rpm 
+uint32 motor4_pos 
