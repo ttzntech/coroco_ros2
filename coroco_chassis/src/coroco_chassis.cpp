@@ -25,6 +25,10 @@ canTran(dev_path, static_cast<DevType>(dev_type))
 {
     RCLCPP_INFO(this->get_logger(), "dev_path: %s  dev_type: %hhu \n", dev_path.c_str(), dev_type);
 
+    /* set chassis to CAN control mode */
+    canTran.data.i421ModeCtrl.mode = E421Mode::CAN;
+    canTran.send(ID_ModeCtrl);
+
     /* Use async recv to prevent block */
     canTran.async_recv();
 
@@ -64,6 +68,12 @@ canTran(dev_path, static_cast<DevType>(dev_type))
         0.0,        0.0,        0.0,        1000000.0,  0.0,        0.0,
         0.0,        0.0,        0.0,        0.0,        1000000.0,  0.0,
         0.0,        0.0,        0.0,        0.0,        0.0,        1000.0};
+}
+
+COROCODriver::~COROCODriver() {
+    /* set chassis to idel mode */
+    canTran.data.i421ModeCtrl.mode = E421Mode::IDEL;
+    canTran.send(ID_ModeCtrl);
 }
 
 void COROCODriver::run() {
@@ -132,10 +142,6 @@ void COROCODriver::run() {
 
     /* calculate odom and publish */
     publishOdom(moveCtrlFbMsg.speed, moveCtrlFbMsg.angular, dt);
-}
-
-COROCODriver::~COROCODriver() {
-
 }
 
 void COROCODriver::moveCtrlCallback(const coroco_msgs::msg::MoveCtrl& msg) {
