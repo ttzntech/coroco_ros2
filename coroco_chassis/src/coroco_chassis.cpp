@@ -25,6 +25,9 @@ canTran(dev_path, static_cast<DevType>(dev_type))
 {
     RCLCPP_INFO(this->get_logger(), "dev_path: %s  dev_type: %hhu \n", dev_path.c_str(), dev_type);
 
+    /* Use async recv to prevent block */
+    canTran.async_recv();
+
     /* Subscriber setup */
     moveCtrlSub = this->create_subscription<coroco_msgs::msg::MoveCtrl>(
         "/cmd_vel", 10, std::bind(&COROCODriver::moveCtrlCallback, this, std::placeholders::_1));
@@ -68,7 +71,7 @@ void COROCODriver::run() {
     double dt = (currentTime_ - currentTime).seconds();
 
     /* sys status publisher */
-    canTran.recv(ID_SysStatus);
+    // canTran.recv(ID_SysStatus);
     sysStatusMsg.cur_status = canTran.data.i211SysStatus.cur_status;
     sysStatusMsg.ctrl_mode = canTran.data.i211SysStatus.ctrl_mode;
     sysStatusMsg.bat_vol = canTran.data.i211SysStatus.bat_vol;
@@ -77,34 +80,34 @@ void COROCODriver::run() {
     sysStatusPub->publish(sysStatusMsg);
 
     /* move ctrl feedback publisher */
-    canTran.recv(ID_MoveCtrlFb);
+    // canTran.recv(ID_MoveCtrlFb);
     moveCtrlFbMsg.speed = canTran.data.i221MoveCtrlFb.speed;
     moveCtrlFbMsg.angular = canTran.data.i221MoveCtrlFb.angular;
     moveCtrlFbPub->publish(moveCtrlFbMsg);
 
     /* remote move ctrl feedback publisher */
-    canTran.recv(ID_ReMoveCtrlFb);
+    // canTran.recv(ID_ReMoveCtrlFb);
     reMoveCtrlFbMsg.speed = canTran.data.i241ReMoveCtrlFb.speed;
     reMoveCtrlFbMsg.angular = canTran.data.i241ReMoveCtrlFb.angular;
     reMoveCtrlFbPub->publish(reMoveCtrlFbMsg);
 
     /* motor info feedback publisher */
-    canTran.recv(ID_Motor1InfoFb);
+    // canTran.recv(ID_Motor1InfoFb);
     motorInfoFbMsg.motor1_rpm = canTran.data.i250Motor1InfoFb.rpm;
     motorInfoFbMsg.motor1_pos = canTran.data.i250Motor1InfoFb.pos;
-    canTran.recv(ID_Motor2InfoFb);
+    // canTran.recv(ID_Motor2InfoFb);
     motorInfoFbMsg.motor2_rpm = canTran.data.i251Motor2InfoFb.rpm;
     motorInfoFbMsg.motor2_pos = canTran.data.i251Motor2InfoFb.pos;
-    canTran.recv(ID_Motor3InfoFb);
+    // canTran.recv(ID_Motor3InfoFb);
     motorInfoFbMsg.motor3_rpm = canTran.data.i252Motor3InfoFb.rpm;
     motorInfoFbMsg.motor3_pos = canTran.data.i252Motor3InfoFb.pos;
-    canTran.recv(ID_Motor4InfoFb);
+    // canTran.recv(ID_Motor4InfoFb);
     motorInfoFbMsg.motor4_rpm = canTran.data.i253Motor4InfoFb.rpm;
     motorInfoFbMsg.motor4_pos = canTran.data.i253Motor4InfoFb.pos;
     motorInfoFbPub->publish(motorInfoFbMsg);
 
     /* warn feedback publisher */
-    canTran.recv(ID_WarnFb);
+    // canTran.recv(ID_WarnFb);
     warnFbMsg.steer_motor_warn = canTran.data.i261WarnFb.steer_motor_warn;
     warnFbMsg.motor1_warn = canTran.data.i261WarnFb.motor1_warn;
     warnFbMsg.motor2_warn = canTran.data.i261WarnFb.motor2_warn;
@@ -115,12 +118,12 @@ void COROCODriver::run() {
     warnFbPub->publish(warnFbMsg);
 
     /* odom feedback publisher */
-    canTran.recv(ID_OdomFb);
+    // canTran.recv(ID_OdomFb);
     odomFbMsg.odom = canTran.data.i311OdomFb.odom;
     odomFbPub->publish(odomFbMsg);
 
     /* BMS feedback publisher */
-    canTran.recv(ID_BMSFb);
+    // canTran.recv(ID_BMSFb);
     BMSFbMsg.bat_soc = canTran.data.i361BMSFb.bat_soc;
     BMSFbMsg.vol = canTran.data.i361BMSFb.vol;
     BMSFbMsg.cur = canTran.data.i361BMSFb.cur;
