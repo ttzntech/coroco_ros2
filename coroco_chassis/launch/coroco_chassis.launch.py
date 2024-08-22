@@ -18,8 +18,8 @@ def generate_launch_description():
     base_frame = LaunchConfiguration('base_frame', default='map')
     odom_frame = LaunchConfiguration('odom_frame', default='odom')
     dev_path = LaunchConfiguration('dev_path', default='/dev/ttyUSB0')
-    # dev_type is one of the 'usbttlcan' 'canable' 'origin'
-    dev_type = LaunchConfiguration('dev_type', default='usbttlcan')
+    # dev_type is one of the '0 -> usbttlcan' '1 -> canable' '2 -> origin'
+    dev_type = LaunchConfiguration('dev_type', default=0)
 
     return LaunchDescription([
         # Define the Node with parameters

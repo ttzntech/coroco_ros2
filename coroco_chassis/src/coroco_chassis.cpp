@@ -15,28 +15,17 @@ using namespace coroco;
 COROCODriver::COROCODriver(const std::string& node_name, int rate):
 Node(node_name),
 tfBroadcaster(this),
-currentTime(this->now())
+currentTime(this->now()),
+pub_tf(this->declare_parameter("pub_tf", true)),
+base_frame(this->declare_parameter("base_frame", "base_link")),
+odom_frame(this->declare_parameter("odom_frame", "odom")),
+dev_path(this->declare_parameter("dev_path", "/dev/ttyUSB0")),
+dev_type(this->declare_parameter("dev_type", 0)),
+canTran(dev_path, static_cast<DevType>(dev_type))
 {
-    pub_tf = this->declare_parameter("pub_tf", true);
-    base_frame = this->declare_parameter("base_frame", "base_link");
-    odom_frame = this->declare_parameter("odom_frame", "odom");
-    dev_path = this->declare_parameter("dev_path", "/dev/ttyUSB0");
-    dev_type = this->declare_parameter("dev_type", "usbttlcan");
+    RCLCPP_INFO(this->get_logger(), "dev_path: %s  dev_type: %hhu \n", dev_path.c_str(), dev_type);
 
-    uint8_t dev_type_;
-    if (dev_type == "usbttlcan")
-        dev_type_ = 0;
-    else if(dev_type == "canable")
-        dev_type_ = 1;
-    else if (dev_type == "origin")
-        dev_type_ = 2;
-    else {
-        RCLCPP_ERROR(this->get_logger(), "dev_type must be 'usbttlcan' 'canable' 'origin' !");
-        exit(-1);
-    }
-
-    canTran = CANTran(dev_path, static_cast<DevType>(dev_type_));
-
+    /* Subscriber setup */
     moveCtrlSub = this->create_subscription<coroco_msgs::msg::MoveCtrl>(
         "/cmd_vel", 10, std::bind(&COROCODriver::moveCtrlCallback, this, std::placeholders::_1));
     modeCtrlSub = this->create_subscription<coroco_msgs::msg::ModeCtrl>(
@@ -44,10 +33,14 @@ currentTime(this->now())
     lightCtrlSub = this->create_subscription<coroco_msgs::msg::LightCtrl>(
         "light_ctrl", 10, std::bind(&COROCODriver::lightCtrlCallback, this, std::placeholders::_1));
 
+    /* Publisher setup */
     sysStatusPub = this->create_publisher<coroco_msgs::msg::SysStatus>("sys_status", 10);
     moveCtrlFbPub = this->create_publisher<coroco_msgs::msg::MoveCtrl>("move_ctrl_fb", 10);
+    reMoveCtrlFbPub = this->create_publisher<coroco_msgs::msg::MoveCtrl>("re_move_ctrl_fb", 10);
     motorInfoFbPub = this->create_publisher<coroco_msgs::msg::MotorInfoFb>("motor_info_fb", 10);
+    warnFbPub = this->create_publisher<coroco_msgs::msg::WarnFb>("warn_fb", 10);
     odomFbPub = this->create_publisher<coroco_msgs::msg::OdomFb>("odom_fb", 10);
+    BMSFbPub = this->create_publisher<coroco_msgs::msg::BMSFb>("BMS_fb", 10);
     odomPub = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 10);
 
     timer_ = this->create_wall_timer(
@@ -89,6 +82,12 @@ void COROCODriver::run() {
     moveCtrlFbMsg.angular = canTran.data.i221MoveCtrlFb.angular;
     moveCtrlFbPub->publish(moveCtrlFbMsg);
 
+    /* remote move ctrl feedback publisher */
+    canTran.recv(ID_ReMoveCtrlFb);
+    reMoveCtrlFbMsg.speed = canTran.data.i241ReMoveCtrlFb.speed;
+    reMoveCtrlFbMsg.angular = canTran.data.i241ReMoveCtrlFb.angular;
+    reMoveCtrlFbPub->publish(reMoveCtrlFbMsg);
+
     /* motor info feedback publisher */
     canTran.recv(ID_Motor1InfoFb);
     motorInfoFbMsg.motor1_rpm = canTran.data.i250Motor1InfoFb.rpm;
@@ -104,12 +103,29 @@ void COROCODriver::run() {
     motorInfoFbMsg.motor4_pos = canTran.data.i253Motor4InfoFb.pos;
     motorInfoFbPub->publish(motorInfoFbMsg);
 
+    /* warn feedback publisher */
+    canTran.recv(ID_WarnFb);
+    warnFbMsg.steer_motor_warn = canTran.data.i261WarnFb.steer_motor_warn;
+    warnFbMsg.motor1_warn = canTran.data.i261WarnFb.motor1_warn;
+    warnFbMsg.motor2_warn = canTran.data.i261WarnFb.motor2_warn;
+    warnFbMsg.bat_warn = canTran.data.i261WarnFb.bat_warn;
+    warnFbMsg.temp1 = canTran.data.i261WarnFb.temp1;
+    warnFbMsg.temp2 = canTran.data.i261WarnFb.temp2;
+    warnFbMsg.warn = canTran.data.i261WarnFb.warn;
+    warnFbPub->publish(warnFbMsg);
+
     /* odom feedback publisher */
     canTran.recv(ID_OdomFb);
     odomFbMsg.odom = canTran.data.i311OdomFb.odom;
     odomFbPub->publish(odomFbMsg);
 
-    /* TODO: 0x261 0x361 0x241 */
+    /* BMS feedback publisher */
+    canTran.recv(ID_BMSFb);
+    BMSFbMsg.bat_soc = canTran.data.i361BMSFb.bat_soc;
+    BMSFbMsg.vol = canTran.data.i361BMSFb.vol;
+    BMSFbMsg.cur = canTran.data.i361BMSFb.cur;
+    BMSFbMsg.temp = canTran.data.i361BMSFb.temp;
+    BMSFbPub->publish(BMSFbMsg);
 
     /* calculate odom and publish */
     publishOdom(moveCtrlFbMsg.speed, moveCtrlFbMsg.angular, dt);

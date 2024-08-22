@@ -34,9 +34,6 @@ class COROCODriver : public rclcpp::Node {
     /* Robot Model */
     Robot                           robot;
 
-    /* CAN tran and recv */
-    coroco::CANTran                 canTran;
-
     /* ROS related */
     rclcpp::TimerBase::SharedPtr    timer_;
     tf2_ros::TransformBroadcaster   tfBroadcaster;
@@ -50,7 +47,10 @@ class COROCODriver : public rclcpp::Node {
     /* Publisher for feedback */
     rclcpp::Publisher<coroco_msgs::msg::SysStatus>::SharedPtr     sysStatusPub;
     rclcpp::Publisher<coroco_msgs::msg::MoveCtrl>::SharedPtr      moveCtrlFbPub;
+    rclcpp::Publisher<coroco_msgs::msg::MoveCtrl>::SharedPtr      reMoveCtrlFbPub;
     rclcpp::Publisher<coroco_msgs::msg::MotorInfoFb>::SharedPtr   motorInfoFbPub;
+    rclcpp::Publisher<coroco_msgs::msg::WarnFb>::SharedPtr        warnFbPub;
+    rclcpp::Publisher<coroco_msgs::msg::BMSFb>::SharedPtr         BMSFbPub;
     /* odomFbPub data is from STM32 wheel's odom */
     rclcpp::Publisher<coroco_msgs::msg::OdomFb>::SharedPtr        odomFbPub;
 
@@ -60,8 +60,11 @@ class COROCODriver : public rclcpp::Node {
     /* Messages for feedback */
     coroco_msgs::msg::SysStatus         sysStatusMsg;
     coroco_msgs::msg::MoveCtrl          moveCtrlFbMsg;
+    coroco_msgs::msg::MoveCtrl          reMoveCtrlFbMsg;
     coroco_msgs::msg::MotorInfoFb       motorInfoFbMsg;
     coroco_msgs::msg::OdomFb            odomFbMsg;
+    coroco_msgs::msg::WarnFb            warnFbMsg;
+    coroco_msgs::msg::BMSFb             BMSFbMsg;
 
     nav_msgs::msg::Odometry             odomMsg;
 
@@ -72,10 +75,13 @@ class COROCODriver : public rclcpp::Node {
     std::string                         odom_frame;
     /* CAN device */
     std::string                         dev_path;
-    std::string                         dev_type;
+    uint8_t                             dev_type;
+
+    /* CAN tran and recv */
+    coroco::CANTran                     canTran;
 
 public:
-    COROCODriver(const std::string& node_name = "cody_driver", int rate = 50);
+    COROCODriver(const std::string& node_name = "coroco_chassis_node", int rate = 50);
 
     ~COROCODriver();
 
@@ -90,7 +96,5 @@ private:
 
     void publishOdom(double speed, double corner, double dt);
 };
-
-
 
 #endif /* end COROCO_CHASSIS_H */
