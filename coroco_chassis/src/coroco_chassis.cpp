@@ -144,20 +144,20 @@ void COROCODriver::run() {
     publishOdom(moveCtrlFbMsg.speed, moveCtrlFbMsg.angular, dt);
 }
 
-void COROCODriver::moveCtrlCallback(const coroco_msgs::msg::MoveCtrl& msg) {
-    canTran.data.i111MoveCtrl.speed = msg.speed;
-    canTran.data.i111MoveCtrl.angular = msg.angular;
+void COROCODriver::moveCtrlCallback(const coroco_msgs::msg::MoveCtrl::UniquePtr msg) {
+    canTran.data.i111MoveCtrl.speed = msg->speed;
+    canTran.data.i111MoveCtrl.angular = msg->angular;
     canTran.send(ID_MoveCtrl);
 }
 
-void COROCODriver::modeCtrlCallback(const coroco_msgs::msg::ModeCtrl& msg) {
-    canTran.data.i421ModeCtrl.mode = static_cast<E421Mode>(msg.mode);
+void COROCODriver::modeCtrlCallback(const coroco_msgs::msg::ModeCtrl::UniquePtr msg) {
+    canTran.data.i421ModeCtrl.mode = static_cast<E421Mode>(msg->mode);
     canTran.send(ID_ModeCtrl);
 }
 
-void COROCODriver::lightCtrlCallback(const coroco_msgs::msg::LightCtrl& msg) {
-    canTran.data.i121LightCtrl.front = static_cast<E121Light>(msg.front);
-    canTran.data.i121LightCtrl.parity = msg.parity;
+void COROCODriver::lightCtrlCallback(const coroco_msgs::msg::LightCtrl::UniquePtr msg) {
+    canTran.data.i121LightCtrl.front = static_cast<E121Light>(msg->front);
+    canTran.data.i121LightCtrl.parity = msg->parity;
     canTran.send(ID_LightCtrl);
 }
 

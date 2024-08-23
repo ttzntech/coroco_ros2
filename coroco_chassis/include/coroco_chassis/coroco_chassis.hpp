@@ -15,7 +15,11 @@
 
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
+#if defined __FOXY__
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h> 
+#else 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp> 
+#endif
 #include <nav_msgs/msg/odometry.hpp>
 
 #include "ttzn_sdk/coroco/tran.hpp"
@@ -88,11 +92,11 @@ public:
 private:
     void run();
 
-    void moveCtrlCallback(const coroco_msgs::msg::MoveCtrl& msg);
+    void moveCtrlCallback(const coroco_msgs::msg::MoveCtrl::UniquePtr msg);
 
-    void modeCtrlCallback(const coroco_msgs::msg::ModeCtrl& msg);
+    void modeCtrlCallback(const coroco_msgs::msg::ModeCtrl::UniquePtr msg);
 
-    void lightCtrlCallback(const coroco_msgs::msg::LightCtrl& msg);
+    void lightCtrlCallback(const coroco_msgs::msg::LightCtrl::UniquePtr msg);
 
     void publishOdom(double speed, double corner, double dt);
 };

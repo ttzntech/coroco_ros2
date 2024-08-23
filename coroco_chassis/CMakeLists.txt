@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(coroco_chassis)
 
+# Fix find Python problem when CMake version is older then 3.12 
+cmake_policy(SET CMP0148 OLD)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -42,6 +45,22 @@ ament_target_dependencies(${PROJECT_NAME}_node
 
 # link ttzn_sdk library
 target_link_libraries(${PROJECT_NAME}_node ttzn_sdk)
+
+# to support other ROS distro
+if($ENV{ROS_DISTRO} STREQUAL "foxy")
+  message(STATUS "Detect ROS distro is 'foxy' !")
+  set(ROS_DISTRO foxy)
+elseif($ENV{ROS_DISTRO} STREQUAL "humble")
+  message(STATUS "Detect ROS distro is 'humble' !")
+  set(ROS_DISTRO humble)
+else()
+  message(STATUS "Undetect ROS distro, default assume to 'humble' !")
+  set(ROS_DISTRO humble)
+endif()
+
+string(TOUPPER ${ROS_DISTRO} ROS_DISTRO)
+
+target_compile_definitions(${PROJECT_NAME}_node PRIVATE __${ROS_DISTRO}__)
 
 # Install the executable
 install(TARGETS
