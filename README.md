@@ -12,7 +12,7 @@ $$ |      $$ |  $$ |$$ |      $$ |  $$ |$$ |      $$ |  $$ |      $$ |      $$ |
 [English Version](./READNE-en.md)
 
 ## 软件环境
-- 架构：x86_64/arm64
+- 架构：x86_64 / arm64
 - 操作系统：Ubuntu 20.04
 - ROS 版本：Foxy / Humble
 
