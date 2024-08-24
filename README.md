@@ -14,13 +14,16 @@ $$ |      $$ |  $$ |$$ |      $$ |  $$ |$$ |      $$ |  $$ |      $$ |      $$ |
 ## 软件环境
 - 架构：x86_64/arm64
 - 操作系统：Ubuntu 20.04
-- ROS 版本：Foxy \ Humble
+- ROS 版本：Foxy / Humble
 
 该项目也应该可以在其他环境中工作，但只有上面列出的环境做过测试。
 
 ## 功能包
 - `coroco_chassis` : coroco 底盘控制功能包，主要接受和发布底层CAN信息。并发布自身里程计到 `/odom`话题下。 
 - `coroco_msgs` : coroco 自定义消息类型。
+- `coroco_control` : coroco 控制功能包，实现一些控制算法。将控制命令发布到`/cmd_vel`话题下。
+- `coroco_startup` : 一些 launch file 和其他相关启动配置。
+
 
 ## 依赖及前置配置
 - 请确保在运行项目之前安装上 `ttzn_sdk`底层驱动。若没安装，请参考该 [README](https://github.com/ttzntech/ttzn_sdk/#安装底盘驱动) 进行该驱动的安装。
@@ -50,7 +53,7 @@ $$ |      $$ |  $$ |$$ |      $$ |  $$ |$$ |      $$ |  $$ |      $$ |      $$ |
 - `/coroco/coroco_chassis_node/base_frame` : tf 变换 base frame 名称，默认 `map`。
 - `/coroco/coroco_chassis_node/odom_frame` : tf 变换 odom frame 名称，默认 `odom`。
 - `/coroco/coroco_chassis_node/dev_path` : CAN dev 的路径名称， 默认 `/dev/ttyUSB0`。
-- `/coroco/coroco_chassis_node/dev_type` : CAN dev 的类型，默认 `1`。\
+- `/coroco/coroco_chassis_node/dev_type` : CAN dev 的类型，默认 `0`。\
 *注：'0 -> usbttlcan'、 '1 -> canable'、 '2 -> origin'*
 
 ## 基础使用方法
@@ -64,7 +67,13 @@ colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ### 示例
 1. 启动 coroco_chassis 节点
 ```bash
-ros2 launch coroco_chassis coroco_chassis.launch
+ros2 launch coroco_chassis coroco_chassis.launch.py
+```
+2. 启动 coroco_rviz 和 teleop 键盘控制节点
+```bash
+ros2 launch coroco_startup coroco_rviz.launch.py
+
+ros2 run coroco_control teleop.py
 ```
 ---
 Copyright &copy; 2023 [威海天特智能科技有限公司](http://ttzntech.com/)
