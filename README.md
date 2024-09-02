@@ -59,7 +59,7 @@ $$ |      $$ |  $$ |$$ |      $$ |  $$ |$$ |      $$ |  $$ |      $$ |      $$ |
 ## 基础使用方法
 ### 编译该项目
 ```bash
-cd <your_catkin_ws>/src
+cd <your_colcon_ws>/src
 git clone https://github.com/ttzntech/cody_ros.git
 cd ..
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
@@ -74,6 +74,14 @@ ros2 launch coroco_chassis coroco_chassis.launch.py
 ros2 launch coroco_startup coroco_rviz.launch.py
 
 ros2 run coroco_control teleop.py
+```
+
+3. 切换控制模式
+```bash
+# 切换为 CAN 控制模式
+ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 1}"
+# 切换为 遥控器 控制模式
+ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 0}"
 ```
 ---
 Copyright &copy; 2023 [威海天特智能科技有限公司](http://ttzntech.com/)
