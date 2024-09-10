@@ -52,31 +52,48 @@ $$ |      $$ |  $$ |$$ |      $$ |  $$ |$$ |      $$ |  $$ |      $$ |      $$ |
 - `/coroco/coroco_chassis_node/pub_tf` : 是否发布 tf 变换。
 - `/coroco/coroco_chassis_node/base_frame` : tf 变换 base frame 名称，默认 `map`。
 - `/coroco/coroco_chassis_node/odom_frame` : tf 变换 odom frame 名称，默认 `odom`。
-- `/coroco/coroco_chassis_node/dev_path` : CAN dev 的路径名称， 默认 `/dev/ttyUSB0`。
 - `/coroco/coroco_chassis_node/dev_type` : CAN dev 的类型，默认 `0`。\
 *注：'0 -> usbttlcan'、 '1 -> canable'、 '2 -> origin'*
+- `/coroco/coroco_chassis_node/dev_path` : CAN dev 的路径名称， 默认 `/dev/ttyUSB0`。
+- `/coroco/coroco_chassis_node/ctrl_mode` : 控制模式， 默认 `1`。\
+*注：'0 -> remote'、'1 -> CAN'*
 
 ## 基础使用方法
 ### 编译该项目
 ```bash
 cd <your_colcon_ws>/src
-git clone https://github.com/ttzntech/cody_ros.git
+git clone https://github.com/ttzntech/coroco_ros2.git
 cd ..
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 ### 示例
 1. 启动 coroco_chassis 节点
 ```bash
+# 启动模版 注：<...> 需要替换为自定义内容，若留空则使用默认值
+ros2 launch coroco_chassis coroco_chassis.launch.py dev_type:=<dev_type> dev_path:=<dev_path> ctrl_mode:=<ctrl_mode>
+
+# 默认参数启动
 ros2 launch coroco_chassis coroco_chassis.launch.py
+
+# 启动 CANAble 模式、设备为 can0
+ros2 launch coroco_chassis coroco_chassis.launch.py dev_type:=1 dev_path:=can0
+
+# 启动原生模式、设备为 can0
+ros2 launch coroco_chassis coroco_chassis.launch.py dev_type:=2 dev_path:=can0
+
+# 启动遥控器控制模式
+ros2 launch coroco_chassis coroco_chassis.launch.py ctrl_mode:=0
 ```
 2. 启动 coroco_rviz 和 teleop 键盘控制节点
 ```bash
-ros2 launch coroco_startup coroco_rviz.launch.py
+# 启动模版 注：<...> 需要替换为自定义内容，若留空则使用默认值
+ros2 launch coroco_startup coroco_rviz.launch.py dev_type:=<dev_type> dev_path:=<dev_path> ctrl_mode:=<ctrl_mode>
 
+# 另起一终端
 ros2 run coroco_control teleop.py
 ```
 
-3. 切换控制模式
+3. 动态切换控制模式
 ```bash
 # 切换为 CAN 控制模式
 ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 1}"

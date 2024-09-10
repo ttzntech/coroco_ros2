@@ -17,12 +17,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     # Declare launch arguments
-    pub_tf = LaunchConfiguration('pub_tf', default='true')
-    base_frame = LaunchConfiguration('base_frame', default='map')
-    odom_frame = LaunchConfiguration('odom_frame', default='odom')
-    dev_path = LaunchConfiguration('dev_path', default='/dev/ttyUSB0')
-    # dev_type is one of the '1 -> usbttlcan' '2 -> canable' '3 -> origin'
-    dev_type = LaunchConfiguration('dev_type', default=0)
     rviz_config = LaunchConfiguration('rviz_config', 
                                       default=PathJoinSubstitution([
                                           FindPackageShare('coroco_startup'),
@@ -38,14 +32,7 @@ def generate_launch_description():
                 'launch',
                 'coroco_chassis.launch.py'
             ])
-        ]),
-        launch_arguments={
-            'pub_tf': pub_tf,
-            'base_frame': base_frame,
-            'odom_frame': odom_frame,
-            'dev_path': dev_path,
-            'dev_type': dev_type
-        }.items()
+        ])
     )
 
     # Define the RViz node

@@ -23,10 +23,14 @@ dev_path(this->declare_parameter("dev_path", "/dev/ttyUSB0")),
 dev_type(this->declare_parameter("dev_type", 0)),
 canTran(dev_path, static_cast<DevType>(dev_type))
 {
-    RCLCPP_INFO(this->get_logger(), "dev_path: %s  dev_type: %hhu \n", dev_path.c_str(), dev_type);
+    /* get ctrl mode default is CAN */
+    uint8_t ctrl_mode = this->declare_parameter("ctrl_mode", 1);
 
-    /* set chassis to CAN control mode */
-    canTran.data.i421ModeCtrl.mode = E421Mode::CAN;
+    /* log all parameters */
+    RCLCPP_INFO(this->get_logger(), "ctrl_mode: %hhu    dev_type: %hhu    dev_path: %s\n", ctrl_mode, dev_type, dev_path.c_str());
+
+    /* set chassis to corresponding ctrl mode */
+    canTran.data.i421ModeCtrl.mode = static_cast<E421Mode>(ctrl_mode);
     canTran.send(ID_ModeCtrl);
 
     /* Use async recv to prevent block */
