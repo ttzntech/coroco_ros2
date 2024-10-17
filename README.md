@@ -100,5 +100,17 @@ ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 1}"
 # 切换为 遥控器 控制模式
 ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 0}"
 ```
+
+4. 记录遥控器控制数据并回放
+```bash
+# 启动节点，详细看上文
+...
+
+# 记录数据包 Ctrl+C 停止记录
+ros2 bag record /coroco/re_move_ctrl_fb -o <file_name>.bag
+
+# 回放数据包
+ros2 bag play <file_name>.bag --remap /coroco/re_move_ctrl_fb:=/cmd_vel
+```
 ---
 Copyright &copy; 2023 [威海天特智能科技有限公司](http://ttzntech.com/)
