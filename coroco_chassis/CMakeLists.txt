@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
 project(coroco_chassis)
 
-# Fix find Python problem when CMake version is older then 3.12 
-cmake_policy(SET CMP0148 OLD)
+# Fix find Python problem when CMake version is greater equal then 3.27
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.27)
+  message(STATUS "CMake version is greater equal then 3.27, use old policy")
+  cmake_policy(SET CMP0148 OLD)
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
