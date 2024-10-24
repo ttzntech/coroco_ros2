@@ -16,13 +16,16 @@ from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    # Declare launch arguments
-    rviz_config = LaunchConfiguration('rviz_config', 
-                                      default=PathJoinSubstitution([
-                                          FindPackageShare('coroco_startup'),
-                                          'rviz',
-                                          'default.rviz'
-                                      ]))
+    # Include the display_coroco launch file
+    display_coroco_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('coroco_description'),
+                'launch',
+                'display_coroco.launch.py'
+            ])
+        ])
+    )
 
     # Include the cody_chassis launch file
     coroco_chassis_launch = IncludeLaunchDescription(
@@ -35,16 +38,7 @@ def generate_launch_description():
         ])
     )
 
-    # Define the RViz node
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz',
-        arguments=['-d', rviz_config],
-        output='screen'
-    )
-
     return LaunchDescription([
         coroco_chassis_launch,
-        rviz_node
+        display_coroco_launch
     ])

@@ -67,7 +67,7 @@ cd ..
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 ### 示例
-1. 启动 coroco_chassis 节点
+- 启动 coroco_chassis 节点
 ```bash
 # 启动模版 注：<...> 需要替换为自定义内容，若留空则使用默认值
 ros2 launch coroco_chassis coroco_chassis.launch.py dev_type:=<dev_type> dev_path:=<dev_path> ctrl_mode:=<ctrl_mode>
@@ -84,7 +84,7 @@ ros2 launch coroco_chassis coroco_chassis.launch.py dev_type:=2 dev_path:=can0
 # 启动遥控器控制模式
 ros2 launch coroco_chassis coroco_chassis.launch.py ctrl_mode:=0
 ```
-2. 启动 coroco_rviz 和 teleop 键盘控制节点
+- 启动 coroco_rviz 和 teleop 键盘控制节点
 ```bash
 # 启动模版 注：<...> 需要替换为自定义内容，若留空则使用默认值
 ros2 launch coroco_startup coroco_rviz.launch.py dev_type:=<dev_type> dev_path:=<dev_path> ctrl_mode:=<ctrl_mode>
@@ -92,8 +92,12 @@ ros2 launch coroco_startup coroco_rviz.launch.py dev_type:=<dev_type> dev_path:=
 # 另起一终端
 ros2 run coroco_control teleop.py
 ```
+-  在 rviz 中查看 coroco 模型
+```bash
+ros2 launch coroco_description display_coroco.launch.py 
+```
 
-3. 动态切换控制模式
+- 动态切换控制模式
 ```bash
 # 切换为 CAN 控制模式
 ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 1}"
@@ -101,7 +105,7 @@ ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 1}"
 ros2 topic pub --once /coroco/mode_ctrl coroco_msgs/msg/ModeCtrl "{mode: 0}"
 ```
 
-4. 记录遥控器控制数据并回放
+- 记录遥控器控制数据并回放
 ```bash
 # 启动节点，详细看上文
 ...

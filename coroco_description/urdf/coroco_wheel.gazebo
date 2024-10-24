@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!--
+ Created on Thu Oct 24 2024
+
+ Author: Joonchen Liau
+ Email: liaojuncheng123@foxmail.com
+
+ Copyright (c) 2024 Tiante Intelligent Technology
+-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="coroco_wheel">
+    <xacro:macro name="coroco_wheel_transmission" params="wheel_prefix">
+        <transmission name="${wheel_prefix}_wheel_trans" type="SimpleTransmission">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${wheel_prefix}_wheel_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="${wheel_prefix}_wheel">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+</robot>
