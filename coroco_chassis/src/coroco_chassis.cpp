@@ -17,7 +17,7 @@ Node(node_name),
 tfBroadcaster(this),
 currentTime(this->now()),
 pub_tf(this->declare_parameter("pub_tf", true)),
-base_frame(this->declare_parameter("base_frame", "base_link")),
+base_frame(this->declare_parameter("base_frame", "map")),
 odom_frame(this->declare_parameter("odom_frame", "odom")),
 dev_path(this->declare_parameter("dev_path", "/dev/ttyUSB0")),
 dev_type(this->declare_parameter("dev_type", 0)),
@@ -83,6 +83,7 @@ COROCODriver::~COROCODriver() {
 void COROCODriver::run() {
     rclcpp::Time currentTime_ = this->now();
     double dt = (currentTime_ - currentTime).seconds();
+    currentTime = currentTime_;
 
     /* sys status publisher */
     // canTran.recv(ID_SysStatus);
@@ -146,6 +147,8 @@ void COROCODriver::run() {
 
     /* calculate odom and publish */
     publishOdom(moveCtrlFbMsg.speed, moveCtrlFbMsg.angular, dt);
+    /* for test situation */
+    // publishOdom(canTran.data.i111MoveCtrl.speed, canTran.data.i111MoveCtrl.angular, dt);
 }
 
 void COROCODriver::moveCtrlCallback(const coroco_msgs::msg::MoveCtrl::UniquePtr msg) {
