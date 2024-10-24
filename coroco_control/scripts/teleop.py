@@ -98,9 +98,9 @@ class Robot(Node):
                 if key == 's':
                     self.cmd_msg.speed -= self.v_inc 
                 if key == 'a':
-                    self.cmd_msg.angular -= self.o_inc 
-                if key == 'd':
                     self.cmd_msg.angular += self.o_inc 
+                if key == 'd':
+                    self.cmd_msg.angular -= self.o_inc 
                 if key == ' ':
                     self.cmd_msg.speed = 0.
 
