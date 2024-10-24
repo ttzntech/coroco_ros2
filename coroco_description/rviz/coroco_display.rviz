@@ -6,8 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Grid1
         - /RobotModel1
-        - /RobotModel1/Status1
         - /TF1
       Splitter Ratio: 0.5
     Tree Height: 761
@@ -48,7 +48,7 @@ Visualization Manager:
         Z: 0
       Plane: XY
       Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
+      Reference Frame: map
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
@@ -91,6 +91,10 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        odom:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         rear_left_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -120,11 +124,23 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
+        front_left_wheel_link:
+          Value: true
         front_mount:
+          Value: true
+        front_right_wheel_link:
           Value: true
         inertial_link:
           Value: true
+        map:
+          Value: true
+        odom:
+          Value: true
+        rear_left_wheel_link:
+          Value: true
         rear_mount:
+          Value: true
+        rear_right_wheel_link:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -132,19 +148,29 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        base_link:
-          front_mount:
-            {}
-          inertial_link:
-            {}
-          rear_mount:
-            {}
+        map:
+          odom:
+            base_link:
+              front_left_wheel_link:
+                {}
+              front_mount:
+                {}
+              front_right_wheel_link:
+                {}
+              inertial_link:
+                {}
+              rear_left_wheel_link:
+                {}
+              rear_mount:
+                {}
+              rear_right_wheel_link:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -187,7 +213,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.4036831855773926
+      Distance: 6.526174545288086
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -202,10 +228,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.08539852499961853
+      Pitch: 0.9147968888282776
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.7153980731964111
+      Yaw: 3.300396203994751
     Saved: ~
 Window Geometry:
   Displays:
@@ -223,5 +249,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1516
-  X: 689
-  Y: 503
+  X: 970
+  Y: 641
